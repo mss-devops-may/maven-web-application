@@ -31,6 +31,8 @@ echo " The Node name is : ${env.NODE_NAME}"
 echo " The Job name is : ${env.JOB_NAME}"
 echo " The Build number is : ${env.BUILD_NUMBER}"
 properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: '']])
+try{
+
 //Checkout Stage
 stage('CheckoutCode'){
 git branch: 'development', credentialsId: 'c09f0383-f524-4fdb-ba91-091c3d9f781f', url: 
@@ -59,5 +61,11 @@ sshagent(['6b09bd12-7422-442f-8971-ab133e0d0c81']) {
   sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@13.234.19.25:/opt/apache-tomcat-9.0.76/webapps"
 }
 }
-
+}//Try Closing
+catch(e){
+currentBuild.result="FAILED"
+}
+finally{
+sendSlackNotifications(currentBuild.result)
+}
 }//Node Closing
