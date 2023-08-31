@@ -35,6 +35,7 @@ try{
 
 //Checkout Stage
 stage('CheckoutCode'){
+sendSlackNotifications('STARTED')
 git branch: 'development', credentialsId: 'c09f0383-f524-4fdb-ba91-091c3d9f781f', url: 
 'https://github.com/mss-devops-may/maven-web-application.git'
 }
